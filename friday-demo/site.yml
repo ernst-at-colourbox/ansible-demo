@@ -1,0 +1,21 @@
+---
+#Install & configure Friday Demo servers
+- hosts: all
+  roles:
+  - security
+- hosts: db
+  roles: 
+  - mysql
+  tags:
+  - mysql
+- hosts: web
+  roles:
+  - nginx
+  - testapp
+  tags:
+  - web
+- hosts: lb
+  roles: 
+  - loadbalancer
+  tags: 
+  - lb

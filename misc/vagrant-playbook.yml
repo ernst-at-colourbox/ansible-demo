@@ -1,0 +1,34 @@
+---
+- hosts: all
+  user: root
+  become: yes
+  gather_facts: yes
+  roles:
+    - franklinkim.sudo
+  vars:
+    username: ernst
+    sudo_users:
+    - name: "%admins"
+      nopasswd: yes
+  pre_tasks:
+    - name: install python
+      raw: sudo yum -y install python python-simplejson
+  tasks:
+  - name: creating admin user group
+    group: 
+      name: admins 
+      state: present
+  - name: create users own group
+    group:
+      name: "{{username}}"
+      state: present
+  - name: creating initial user
+    user: 
+      name: "{{username}}"
+      groups: "{{username}},admins"
+      shell: "/bin/bash"
+  - name: adding pubkey to user
+    authorized_key:
+      user: ernst
+      state: present
+      key: "{{ lookup('file', '/home/ernst/.ssh/ernst_colourbox.pub') }}"
