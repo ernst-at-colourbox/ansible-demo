@@ -1,0 +1,38 @@
+---
+- name: install nginx and php-fpm
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nginx
+    - php-fpm
+    - php
+  tags: [web-install, yum]
+
+- name: configure nginx for php-fpm socket
+  copy:
+    src: nginx_php-fpm.conf
+    dest: /etc/nginx/conf.d/php-fpm.conf
+  tags: web-install
+
+- name: configure php-fpm socket listening
+  template:
+    src: php-fpm_www.conf.j2
+    dest: /etc/php-fpm.d/www.conf
+  tags: web-install
+
+- name: copy nginx.conf with no default server
+  copy: 
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+  tags: web-install
+
+- name: enable and start nginx and php-fpm
+  service:
+    name: "{{ item }}"
+    state: reloaded
+    enabled: yes
+  with_items:
+    - nginx
+    - php-fpm
+  tags: web-install

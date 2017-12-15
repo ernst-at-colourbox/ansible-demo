@@ -1,0 +1,31 @@
+---
+# installs and configures mariadb
+- name: install 
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mariadb
+    - mariadb-server
+    - MySQL-python
+  tags: [db-install, yum]
+
+- name: enable & start service
+  service: 
+    name: mariadb
+    state: started
+    enabled: yes
+  tags: db-install
+
+- name: configure root user
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mariadb_root_password }}"
+  tags: db-config
+
+- name: copy root password to root home
+  template: 
+    src: root_my.cnf.j2
+    dest: /root/.my.cnf
+  tags: db-config

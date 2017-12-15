@@ -1,0 +1,37 @@
+---
+- name: Install Worlds Best Editor!, ntp, git
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nano
+    - git
+    - ntp
+    - policycoreutils-python
+    - libselinux-python
+  tags: [common-apps, yum]
+
+- name: Configure ntp file
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  tags: ntp
+  notify: restart ntp
+
+- name: Start the ntp service
+  service: name=ntpd state=started enabled=yes
+  tags: ntp
+
+- name: Install Cowsay & fortune
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - cowsay
+    - fortune-mod
+  tags: [hygge, yum]
+
+- name: Configure greeting
+  lineinfile:
+    path: "/etc/profile"
+    line: 'fortune | cowsay'
+  tags: hygge
+

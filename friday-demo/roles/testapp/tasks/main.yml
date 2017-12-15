@@ -1,0 +1,32 @@
+---
+# get test app from github and install it
+- name: Create app directory
+  file: 
+    path: "{{ testapp_path }}"
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: "u+rx,g-wx,o-w"
+    recurse: yes
+    setype: httpd_sys_content_t
+    seuser: system_u
+  tags: testapp-pretask
+
+- name: Copy nginx config to /etc/nginx/conf.d/
+  template: 
+    src: nginx_testapp.conf
+    dest: /etc/nginx/conf.d/testapp.conf
+  tags: testapp-pretask
+
+- name: Clone testapp
+  become_user: nginx
+  git:
+    repo: https://github.com/ernst-at-colourbox/ansible-testapp.git
+    dest: "{{ testapp_path }}"
+  tags: testapp-get
+
+- name: reload nginx
+  service:
+    name: nginx
+    state: reloaded
+  tags: testapp-get

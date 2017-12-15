@@ -17,7 +17,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provider :virtualbox do |v|
     v.memory = 512
-    v.cpus = 3
+    v.cpus = 1
     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.customize ["modifyvm", :id, "--ioapic", "on"]
   end
@@ -26,7 +26,7 @@ Vagrant.configure(2) do |config|
   (1..N).each do |machine_id|
     config.vm.define "machine#{machine_id}" do |machine|
       machine.vm.hostname = "machine#{machine_id}"
-      machine.vm.network "private_network", type: "dhcp"
+      machine.vm.network "private_network", ip: "172.28.128.#{machine_id+100}"
       
       # Only execute once the Ansible provisioner,
       # when all the machines are up and ready.

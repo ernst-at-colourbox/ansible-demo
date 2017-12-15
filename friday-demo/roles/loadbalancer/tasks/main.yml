@@ -1,0 +1,19 @@
+---
+- name: install nginx
+  yum: 
+    name: nginx
+    state: present
+  tags: [lb-install, yum]
+
+- name: setup loadbalancing
+  template:
+    src: loadbalancer.conf.j2
+    dest: /etc/nginx/nginx.conf
+  tags: lb-install
+
+- name: start and enable nginx
+  service:
+    name: nginx
+    state: reloaded
+    enabled: yes
+  tags: lb-install
