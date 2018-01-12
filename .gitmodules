@@ -1,3 +1,6 @@
 [submodule "roles"]
 	path = roles
 	url = git@github.com:ColourboxDevelopment/ansible-roles.git
+[submodule "webnode/roles"]
+	path = webnode/roles
+	url = git@github.com:ColourboxDevelopment/ansible-roles.git
